@@ -1,8 +1,6 @@
 import requests
 
 
-
-
 def get_repo_details():
     url = f"https://api.github.com/repos/{OWNER}/{REPO}"
     response = requests.get(url, headers=HEADERS)
@@ -67,12 +65,12 @@ if __name__ == "__main__":
         print(
             f"Issue #{issue['number']}: {issue['title']} ({'PR' if 'pull_request' in issue else 'Issue'})")
 
-    if prs:
-        pr_number = prs[0]["number"]
-        print(f"\n--- Details of PR #{pr_number} ---")
-        pr_details = get_pr_details(pr_number)
-        print(f"Title: {pr_details['title']}")
-        print(f"State: {pr_details['state']}")
-        print(f"Mergeable: {pr_details.get('mergeable')}")
-        print(f"Created at: {pr_details['created_at']}")
-        print(f"Changed files: {pr_details['changed_files']}")
+    # if prs:
+    #     pr_number = prs[0]["number"]
+    #     print(f"\n--- Details of PR #{pr_number} ---")
+    #     pr_details = get_pr_details(pr_number)
+    #     print(f"Title: {pr_details['title']}")
+    #     print(f"State: {pr_details['state']}")
+    #     print(f"Mergeable: {pr_details.get('mergeable')}")
+    #     print(f"Created at: {pr_details['created_at']}")
+    #     print(f"Changed files: {pr_details['changed_files']}")
