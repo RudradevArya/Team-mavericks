@@ -23,12 +23,24 @@ def delete_task():
             print("❌ Invalid task number.")
 
 def update_task():
+    if not tasks:
+        print("📭 No tasks to update.")
+        return
+
     list_tasks()
-    if tasks:
+    try:
         idx = int(input("Enter task number to update: ")) - 1
-        if 0 <= idx < len(tasks):
-            new_title = input("Enter new title: ")
+        if idx not in range(len(tasks)):
+            print("❌ Invalid task number.")
+            return
+
+        current_title = tasks[idx]['title']
+        new_title = input(f"Enter new title (current: '{current_title}'): ").strip()
+        if new_title:
             tasks[idx]['title'] = new_title
             print("✏️ Task updated.")
         else:
-            print("❌ Invalid task number.")
+            print("⚠️ Title cannot be empty. Task not updated.")
+    except ValueError:
+        print("❌ Please enter a valid number.")
+
