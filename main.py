@@ -75,3 +75,4 @@ if __name__ == "__main__":
         print(f"Changed files: {pr_details['changed_files']}")
 print("hello")
 print("hello2")
+print("hello3")
