@@ -1,8 +1,5 @@
 import requests
 
-
-
-
 def get_repo_details():
     url = f"https://api.github.com/repos/{OWNER}/{REPO}"
     response = requests.get(url, headers=HEADERS)
@@ -76,3 +73,5 @@ if __name__ == "__main__":
         print(f"Mergeable: {pr_details.get('mergeable')}")
         print(f"Created at: {pr_details['created_at']}")
         print(f"Changed files: {pr_details['changed_files']}")
+print("hello")
+print("hello2")
