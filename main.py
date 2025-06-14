@@ -74,3 +74,4 @@ if __name__ == "__main__":
         print(f"Created at: {pr_details['created_at']}")
         print(f"Changed files: {pr_details['changed_files']}")
 print("hello")
+print("hello2")
