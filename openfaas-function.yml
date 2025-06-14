@@ -1,0 +1,36 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://localhost:8080  # Update this with your gateway URL
+
+functions:
+  pr-reviewer:
+    lang: python3-flask
+    handler: ./pr-reviewer
+    image: pr-reviewer:latest
+    build_options:
+      - --no-cache
+    environment:
+      write_debug: true
+      read_timeout: 60s
+      write_timeout: 60s
+      exec_timeout: 120s
+      combine_output: false
+    secrets:
+      - github-token
+      - github-webhook-secret  
+      - openai-api-key
+    labels:
+      # Scaling configuration
+      com.openfaas.scale.min: 0
+      com.openfaas.scale.max: 5
+      com.openfaas.scale.target: 20
+      com.openfaas.scale.target-proportion: 0.70
+      com.openfaas.scale.type: capacity
+      
+      # Resource limits
+      com.openfaas.constraints.memory: 256M
+      com.openfaas.constraints.cpu: 0.5
+      
+      # Topic for async processing
+      topic: github-webhooks 
