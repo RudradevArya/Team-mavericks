@@ -1,78 +1,82 @@
 import requests
 
+# Constants (set your actual GitHub repo info and headers)
+OWNER = "your-username"
+REPO = "your-repo"
+HEADERS = {
+    "Accept": "application/vnd.github+json",
+    "Authorization": f"Bearer YOUR_GITHUB_TOKEN"
+}
 
-
+def fetch_from_github(endpoint, params=None):
+    """Generic GitHub GET request"""
+    url = f"https://api.github.com/repos/{OWNER}/{REPO}/{endpoint}"
+    response = requests.get(url, headers=HEADERS, params=params)
+    response.raise_for_status()
+    return response.json()
 
 def get_repo_details():
-    url = f"https://api.github.com/repos/{OWNER}/{REPO}"
-    response = requests.get(url, headers=HEADERS)
-    return response.json()
-
-# ---- Fetch All Pull Requests ----
-
+    return fetch_from_github("")
 
 def get_pull_requests(state="open"):
-    url = f"https://api.github.com/repos/{OWNER}/{REPO}/pulls"
-    params = {"state": state}
-    response = requests.get(url, headers=HEADERS, params=params)
-    return response.json()
-
-# ---- Fetch Single PR Details ----
-
+    return fetch_from_github("pulls", {"state": state})
 
 def get_pr_details(pr_number):
-    url = f"https://api.github.com/repos/{OWNER}/{REPO}/pulls/{pr_number}"
-    response = requests.get(url, headers=HEADERS)
-    return response.json()
-
-# ---- Fetch All Issues (including PRs) ----
-
+    return fetch_from_github(f"pulls/{pr_number}")
 
 def get_issues():
-    url = f"https://api.github.com/repos/{OWNER}/{REPO}/issues"
-    response = requests.get(url, headers=HEADERS)
-    return response.json()
-
-# ---- Fetch All Commits ----
-
+    return fetch_from_github("issues")
 
 def get_commits():
-    url = f"https://api.github.com/repos/{OWNER}/{REPO}/commits"
-    response = requests.get(url, headers=HEADERS)
-    return response.json()
+    return fetch_from_github("commits")
 
-
-# ---- MAIN ----
-if __name__ == "__main__":
+def print_repo_info(repo):
     print("\n--- Repository Info ---")
-    repo = get_repo_details()
     print(f"Name: {repo.get('name')}")
     print(f"Description: {repo.get('description')}")
     print(f"Default Branch: {repo.get('default_branch')}")
     print(f"Visibility: {repo.get('visibility')}")
 
+def print_pull_requests(prs):
     print("\n--- Open Pull Requests ---")
-    prs = get_pull_requests()
-    for pr in prs[:5]:  # limit to 5
+    for pr in prs[:5]:
         print(f"PR #{pr['number']}: {pr['title']} by {pr['user']['login']}")
 
+def print_commits(commits):
     print("\n--- Recent Commits ---")
-    commits = get_commits()
-    for commit in commits[:5]:  # show last 5 commits
-        print(f"{commit['sha'][:7]}: {commit['commit']['message']}")
+    for commit in commits[:5]:
+        sha = commit['sha'][:7]
+        message = commit['commit']['message']
+        print(f"{sha}: {message}")
 
+def print_issues(issues):
     print("\n--- Open Issues (includes PRs) ---")
+    for issue in issues[:5]:
+        kind = "PR" if "pull_request" in issue else "Issue"
+        print(f"Issue #{issue['number']}: {issue['title']} ({kind})")
+
+def print_pr_details(pr):
+    print(f"\n--- Details of PR #{pr['number']} ---")
+    print(f"Title: {pr['title']}")
+    print(f"State: {pr['state']}")
+    print(f"Mergeable: {pr.get('mergeable')}")
+    print(f"Created at: {pr['created_at']}")
+    print(f"Changed files: {pr['changed_files']}")
+
+# ---- MAIN ----
+if __name__ == "__main__":
+    repo = get_repo_details()
+    print_repo_info(repo)
+
+    prs = get_pull_requests()
+    print_pull_requests(prs)
+
+    commits = get_commits()
+    print_commits(commits)
+
     issues = get_issues()
-    for issue in issues[:5]:  # limit to 5
-        print(
-            f"Issue #{issue['number']}: {issue['title']} ({'PR' if 'pull_request' in issue else 'Issue'})")
+    print_issues(issues)
 
     if prs:
-        pr_number = prs[0]["number"]
-        print(f"\n--- Details of PR #{pr_number} ---")
-        pr_details = get_pr_details(pr_number)
-        print(f"Title: {pr_details['title']}")
-        print(f"State: {pr_details['state']}")
-        print(f"Mergeable: {pr_details.get('mergeable')}")
-        print(f"Created at: {pr_details['created_at']}")
-        print(f"Changed files: {pr_details['changed_files']}")
+        pr_details = get_pr_details(prs[0]["number"])
+        print_pr_details(pr_details)
