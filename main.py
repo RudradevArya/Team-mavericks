@@ -1,12 +1,12 @@
 import requests
 
 
-
-
+#
 def get_repo_details():
     url = f"https://api.github.com/repos/{OWNER}/{REPO}"
     response = requests.get(url, headers=HEADERS)
     return response.json()
+
 
 # ---- Fetch All Pull Requests ----
 
@@ -17,6 +17,7 @@ def get_pull_requests(state="open"):
     response = requests.get(url, headers=HEADERS, params=params)
     return response.json()
 
+
 # ---- Fetch Single PR Details ----
 
 
@@ -25,6 +26,7 @@ def get_pr_details(pr_number):
     response = requests.get(url, headers=HEADERS)
     return response.json()
 
+
 # ---- Fetch All Issues (including PRs) ----
 
 
@@ -32,6 +34,7 @@ def get_issues():
     url = f"https://api.github.com/repos/{OWNER}/{REPO}/issues"
     response = requests.get(url, headers=HEADERS)
     return response.json()
+
 
 # ---- Fetch All Commits ----
 
@@ -65,7 +68,8 @@ if __name__ == "__main__":
     issues = get_issues()
     for issue in issues[:5]:  # limit to 5
         print(
-            f"Issue #{issue['number']}: {issue['title']} ({'PR' if 'pull_request' in issue else 'Issue'})")
+            f"Issue #{issue['number']}: {issue['title']} ({'PR' if 'pull_request' in issue else 'Issue'})"
+        )
 
     if prs:
         pr_number = prs[0]["number"]
